@@ -19,8 +19,22 @@ connection.connect(function(err) {
 });
 
 function start() {
-    //display items available for purchase
+
     showItems();
+    //prompt to ask what item and quantity
+    inquirer
+        .prompt([
+            {
+                name: "whatProduct",
+                type: "input",
+                message: "Enter the Item ID of the product you wish to purchase."
+            },
+            {
+                name: "howMany", 
+                type: "input", 
+                message: "How many would you like to buy?"
+            }
+        ]);
 }
 
 //function to diplay items for sale
@@ -28,6 +42,16 @@ function showItems() {
     connection.query("SELECT item_id, product_name, department_name, price FROM products", function(err, result) {
         if (err) throw err;
 
-        console.log(result);
+        console.log("Items for sale: \n");
+        var productArray = [];
+        for (var i = 0; i < result.length; i ++) {
+            productArray.push(
+                "Product: " + result[i].product_name + 
+                " | Item ID: " + result[i].item_id +
+                " | Department: " + result[i].department_name + 
+                " | Price: " + result[i].price
+            );
+            console.log(productArray[i] + "\n");
+        }
     });
 }
