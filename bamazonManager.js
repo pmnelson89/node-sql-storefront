@@ -106,6 +106,46 @@ function addInventory() {
         });
 }
 
+function restock(itemId) {
+    let item = itemId;
+    let stockQuant;
+    connection.query("SELECT stock_quantity FROM products WHERE item_id=?", [item], function(err, result) {
+        if (err) throw err;
+        stockQuant = parseFloat(result[0].stock_quantity);
+    });
+
+    inquirer
+        .prompt([
+            {
+                name: "addQuantity",
+                type: "input",
+                message: "How many would you like to add?",
+                validate: function(value) {
+                    if (isNaN(value) === false) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        ])
+        .then(function(answer) {
+            let addAmount = parseFloat(answer.addQuantity);
+            connection.query("UPDATE products SET ? WHERE ?", [
+                {
+                    stock_quantity: stockQuant + addAmount
+                },
+                {
+                    item_id: item
+                }
+            ], function(err) {
+                if (err) throw err;
+            });
+            console.log("Inventory Updated.");
+            console.log("===============================================");
+            showProducts();
+        });
+}
+
 function addProduct() {
     inquirer
         .prompt([
@@ -152,39 +192,5 @@ function addProduct() {
                     menuPrompt();
                 }
             );
-        });
-}
-
-function restock(itemId) {
-    let item = itemId;
-    let stockQuant;
-    connection.query("SELECT stock_quantity FROM products WHERE item_id=?", [item], function(err, result) {
-        if (err) throw err;
-        stockQuant = parseInt(result[0].stock_quantity);
-    });
-
-    inquirer
-        .prompt([
-            {
-                name: "addQuantity",
-                type: "input",
-                message: "How many would you like to add?"
-            }
-        ])
-        .then(function(answer) {
-            let addAmount = parseInt(answer.addQuantity);
-            connection.query("UPDATE products SET ? WHERE ?", [
-                {
-                    stock_quantity: stockQuant + addAmount
-                },
-                {
-                    item_id: item
-                }
-            ], function(err) {
-                if (err) throw err;
-            });
-            console.log("Inventory Updated.");
-            console.log("===============================================");
-            showProducts();
         });
 }

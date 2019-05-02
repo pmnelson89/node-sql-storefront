@@ -19,6 +19,8 @@ When prompted, select the item you would like to purchase by entering the item I
 After you have selected an item, you will be prompted to enter a quantity to purchase.
 The app will then calculate your total, and update the inventory of the item.
 
+![alt text](images/customer-view.png "Customer View in terminal")
+
 ### Manager View
 
 In the command line, enter "node bamazonManager.js" to run the manager view functionality.
