@@ -38,9 +38,32 @@ function start() {
             }
         ])
         .then(function(answer) {
-            let productChoice = answer.whatProduct;
+            let choiceId = answer.whatProduct;
             let amount = answer.howMany;
-            checkout(productChoice, amount);
+            connection.query("SELECT * FROM products WHERE item_id =?", [choiceId], function(err, res) {
+                if (err) throw err;
+        
+                if (amount <= res[0].stock_quantity) {
+                    let total = res[0].price * amount;
+                    console.log("\nThanks for ordering " + res[0].product_name + "!");
+                    console.log("Your total is: " + total + "\n");
+                    console.log("===============================================");
+
+                    connection.query("UPDATE products SET ? WHERE ?", [
+                        {
+                            stock_quantity: res[0].stock_quantity - amount
+                        },
+                        {
+                            item_id: choiceId
+                        }
+                    ], function(err, result) {
+                        if (err) throw err;
+                        console.log("Inventory Updated.");
+                    });
+                } else {
+                    console.log("\nThere is insufficient stock to complete your order." + "\n");
+                };
+            });        
         });
 }
 
@@ -64,19 +87,24 @@ function showItems() {
     });
 }
 
-//function to complete an order
-function checkout(itemId, amount) {
-    connection.query("SELECT * FROM products WHERE item_id = " + itemId, function(err, res){
-        if (err) throw err;
-
-        if (amount <= res[0].stock_quantity) {
-            let total = res[0].price * amount;
-            console.log("\nThanks for ordering " + res[0].product_name + "!");
-            console.log("Your total is: " + total + "\n");
-
-            // connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amount + "WHERE item_id = " + itemId);
-        } else {
-            console.log("\nThere is insufficient stock to complete your order." + "\n");
-        };
-    });
-}
+//function to update inventory
+// function updateInv(item, amount) {
+    // let purchasedAmount = parseInt(amount);
+    // connection.query("SELECT stock_quantity FROM products WHERE item_id = " + item, function(err, res) {
+    //     if (err) throw err;
+    //     let currentStock = parseInt(res);
+    //     connection.query("UPDATE products SET ? WHERE ?", [
+    //         {
+    //             stock_quantity: currentStock - purchasedAmount
+    //         },
+    //         {
+    //             item_id: item
+    //         }
+    //     ], function(err) {
+    //         if (err) throw err;
+    //     });
+    //     console.log("Inventory Updated.");
+    //     console.log("===============================================");
+    //     start();
+    // })
+// }
