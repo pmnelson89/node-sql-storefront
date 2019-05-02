@@ -1,4 +1,4 @@
-//requirements
+//dependencies 
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     host: "localhost", 
     port: 3306, 
     user: "root", 
-    password: "",
+    password: "America$1776",
     database: "bamazon"
 });
 
@@ -46,12 +46,12 @@ function start() {
 
 //function to diplay items for sale
 function showItems() {
-    connection.query("SELECT item_id, product_name, department_name, price FROM products", function(err, result) {
+    connection.query("SELECT * FROM products", function(err, result) {
         if (err) throw err;
 
         console.log("\nItems for sale: \n");
-        var productArray = [];
-        for (var i = 0; i < result.length; i ++) {
+        let productArray = [];
+        for (let i = 0; i < result.length; i ++) {
             productArray.push(
                 "Product: " + result[i].product_name + 
                 " | Item ID: " + result[i].item_id +
@@ -59,6 +59,8 @@ function showItems() {
             );
             console.log(productArray[i] + "\n");
         }
+        console.log("===============================================");
+
     });
 }
 
@@ -68,15 +70,13 @@ function checkout(itemId, amount) {
         if (err) throw err;
 
         if (amount <= res[0].stock_quantity) {
-            var total = res[0].price * amount;
+            let total = res[0].price * amount;
             console.log("\nThanks for ordering " + res[0].product_name + "!");
             console.log("Your total is: " + total + "\n");
 
-            connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amount + "WHERE item_id = " + itemId);
+            // connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amount + "WHERE item_id = " + itemId);
         } else {
             console.log("\nThere is insufficient stock to complete your order." + "\n");
         };
     });
-
-    connection.end();
 }
