@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     host: "localhost", 
     port: 3306, 
     user: "root", 
-    password: "America$1776",
+    password: "",
     database: "bamazon"
 });
 
@@ -63,14 +63,16 @@ function showItems() {
 }
 
 //function to complete an order
-function checkout(item, amount) {
-    connection.query("SELECT * FROM products WHERE item_id = " + item, function(err, res){
+function checkout(itemId, amount) {
+    connection.query("SELECT * FROM products WHERE item_id = " + itemId, function(err, res){
         if (err) throw err;
 
         if (amount <= res[0].stock_quantity) {
             var total = res[0].price * amount;
             console.log("\nThanks for ordering " + res[0].product_name + "!");
             console.log("Your total is: " + total + "\n");
+
+            connection.query("UPDATE products SET stock_quantity = stock_quantity - " + amount + "WHERE item_id = " + itemId);
         } else {
             console.log("\nThere is insufficient stock to complete your order." + "\n");
         };
