@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     host: "localhost", 
     port: 3306, 
     user: "root", 
-    password: "America$1776",
+    password: "",
     database: "bamazon"
 });
 
@@ -56,10 +56,11 @@ function start() {
                         {
                             item_id: choiceId
                         }
-                    ], function(err, result) {
+                    ], function(err) {
                         if (err) throw err;
                         console.log("Inventory Updated.");
                     });
+                    start();
                 } else {
                     console.log("\nThere is insufficient stock to complete your order." + "\n");
                 };
@@ -86,25 +87,3 @@ function showItems() {
 
     });
 }
-
-//function to update inventory
-// function updateInv(item, amount) {
-    // let purchasedAmount = parseInt(amount);
-    // connection.query("SELECT stock_quantity FROM products WHERE item_id = " + item, function(err, res) {
-    //     if (err) throw err;
-    //     let currentStock = parseInt(res);
-    //     connection.query("UPDATE products SET ? WHERE ?", [
-    //         {
-    //             stock_quantity: currentStock - purchasedAmount
-    //         },
-    //         {
-    //             item_id: item
-    //         }
-    //     ], function(err) {
-    //         if (err) throw err;
-    //     });
-    //     console.log("Inventory Updated.");
-    //     console.log("===============================================");
-    //     start();
-    // })
-// }
