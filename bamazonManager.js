@@ -18,6 +18,7 @@ connection.connect(function(err) {
     menuPrompt();
 });
 
+//function to display menu
 function menuPrompt() {
     inquirer
         .prompt([
@@ -49,6 +50,7 @@ function menuPrompt() {
         })
 }
 
+//function to display products
 function showProducts() {
     connection.query("SELECT * FROM products", function(err, result) {
         if (err) throw err;
@@ -69,6 +71,7 @@ function showProducts() {
     });
 }
 
+//function to display items with less than 5 units in stock
 function lowInventory() {
     connection.query("SELECT * FROM products WHERE stock_quantity < 5", function(err, result) {
         if (err) throw err;
@@ -89,6 +92,7 @@ function lowInventory() {
     });
 }
 
+//function to select an item to increase stock
 function addInventory() {
     connection.query("SELECT * FROM products", function(err, res) {
         if (err) throw err;
@@ -106,6 +110,7 @@ function addInventory() {
         });
 }
 
+//function to increase the stock quantity of an item
 function restock(itemId) {
     let item = itemId;
     let stockQuant;
@@ -146,6 +151,7 @@ function restock(itemId) {
         });
 }
 
+//function to add a new product
 function addProduct() {
     inquirer
         .prompt([

@@ -18,6 +18,7 @@ connection.connect(function(err) {
     start();
 });
 
+//function to display the sales prompts
 function showPrompt() {
 
     //prompt to ask what item and quantity
