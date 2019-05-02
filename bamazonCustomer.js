@@ -15,13 +15,13 @@ const connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as ID " + connection.threadId + "\n");
-    start();
+    showItems();
 });
 
 function start() {
 
     //display items
-    showItems();
+    // showItems();
 
     //prompt to ask what item and quantity
     inquirer
@@ -40,15 +40,19 @@ function start() {
         .then(function(answer) {
             let choiceId = answer.whatProduct;
             let amount = answer.howMany;
+
+            //Pull item from database
             connection.query("SELECT * FROM products WHERE item_id =?", [choiceId], function(err, res) {
                 if (err) throw err;
         
+                //Calculate order total
                 if (amount <= res[0].stock_quantity) {
                     let total = res[0].price * amount;
                     console.log("\nThanks for ordering " + res[0].product_name + "!");
                     console.log("Your total is: " + total + "\n");
                     console.log("===============================================");
 
+                    //Update inventory
                     connection.query("UPDATE products SET ? WHERE ?", [
                         {
                             stock_quantity: res[0].stock_quantity - amount
@@ -85,5 +89,6 @@ function showItems() {
         }
         console.log("===============================================");
 
-    });
+    })
+    .then(start());
 }
