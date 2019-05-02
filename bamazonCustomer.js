@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     host: "localhost", 
     port: 3306, 
     user: "root", 
-    password: "",
+    password: "America$1776",
     database: "bamazon"
 });
 
@@ -20,7 +20,9 @@ connection.connect(function(err) {
 
 function start() {
 
+    //display items
     showItems();
+
     //prompt to ask what item and quantity
     inquirer
         .prompt([
@@ -34,7 +36,12 @@ function start() {
                 type: "input", 
                 message: "How many would you like to buy?"
             }
-        ]);
+        ])
+        .then(function(answer) {
+            let productChoice = answer.whatProduct;
+            let amount = answer.howMany;
+            checkout(productChoice, amount);
+        });
 }
 
 //function to diplay items for sale
@@ -42,16 +49,32 @@ function showItems() {
     connection.query("SELECT item_id, product_name, department_name, price FROM products", function(err, result) {
         if (err) throw err;
 
-        console.log("Items for sale: \n");
+        console.log("\nItems for sale: \n");
         var productArray = [];
         for (var i = 0; i < result.length; i ++) {
             productArray.push(
                 "Product: " + result[i].product_name + 
                 " | Item ID: " + result[i].item_id +
-                " | Department: " + result[i].department_name + 
                 " | Price: " + result[i].price
             );
             console.log(productArray[i] + "\n");
         }
     });
+}
+
+//function to complete an order
+function checkout(item, amount) {
+    connection.query("SELECT * FROM products WHERE item_id = " + item, function(err, res){
+        if (err) throw err;
+
+        if (amount <= res[0].stock_quantity) {
+            var total = res[0].price * amount;
+            console.log("\nThanks for ordering " + res[0].product_name + "!");
+            console.log("Your total is: " + total + "\n");
+        } else {
+            console.log("\nThere is insufficient stock to complete your order." + "\n");
+        };
+    });
+
+    connection.end();
 }
