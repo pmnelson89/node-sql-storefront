@@ -8,6 +8,11 @@ In your command line, make sure you have the proper node modules by entering the
 'npm install mysql'
 'npm install inquirer'
 
+## Technology
+* JavaScript
+* Node.js
+* MySQL
+* inquirer
 
 ### Customer View
 
